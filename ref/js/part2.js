@@ -6,20 +6,35 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Each user should be in a new <div> with the user's first name, last name, and profile image.
     // The format should follow the example user in the HTML file.
 
-    let response = await fetch("https://reqres.in/api/users?page=1");
-    let data = await response.json();
-    for (let user of data.data) {
-        let div = document.createElement("div");
-        let h2 = document.createElement("h2");
-        let img = document.createElement("img");
+    // TODO
+    const url = "https://randomuser.me/api/?results=20";
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const users = data.results;
 
-        div.className = "card";
-        h2.textContent = user.first_name + " " + user.last_name;
-        img.src = user.avatar;
-        img.alt = "Profile pic";
+        users.forEach(user => {
+            const firstName = user.name.first;
+            const lastName = user.name.last;
+            const fullName = `${firstName} ${lastName}`;
+            const profileImage = user.picture.thumbnail;
 
-        div.appendChild(h2);
-        div.appendChild(img);
-        userList.appendChild(div);
+            const userDiv = document.createElement("div");
+            userDiv.classList.add("card");
+
+            const imgElement = document.createElement("img");
+            imgElement.src = profileImage;
+            imgElement.alt = fullName;
+
+            const nameElement = document.createElement("p");
+            nameElement.textContent = fullName;
+
+            userDiv.appendChild(imgElement);
+            userDiv.appendChild(nameElement);
+
+            userList.appendChild(userDiv);
+        });
+    } catch (error) {
+        console.error("Error fetching users:", error);
     }
 });
